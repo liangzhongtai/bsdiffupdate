@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.chinamobile.bsdiff.bsdiffupdate" version="1.0.5" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>bsdiffupdate</name>
+    <js-module name="BsdiffUpdate" src="www/bsdiffupdate.js">
+        <clobbers target="cordova.plugins.bsdiffupdate" />
+    </js-module>
+<platform name="android">
+        <!-- app更新插件 -->
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="BsdiffUpdate">
+                <param name="android-package" value="com.chinamobile.bsdiff.BsdiffUpdate"/>
+            </feature>
+        </config-file>
+        <!-- 权限 -->
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+            <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+        </config-file>
+
+        <!-- 适配sdk24及以上 -->
+        <config-file target="AndroidManifest.xml" parent="application">
+            <provider
+                android:name="com.chinamobile.bsdiff.FileProvider"
+                android:authorities="${applicationId}.provider"
+                android:exported="false"
+                android:grantUriPermissions="true" >
+                <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/bsdiffupdate_provider_paths"/>
+            </provider>
+        </config-file>
+
+        <!-- 项目文件 -->
+        <source-file src="src/android/xml/bsdiffupdate_provider_paths.xml"  target-dir="res/xml" />
+
+        <source-file src="src/android/BsdiffUpdate.java" target-dir="src/com/chinamobile/bsdiff" />
+        <source-file src="src/android/FileProvider.java" target-dir="src/com/chinamobile/bsdiff" />
+		<source-file src="src/android/BsdiffJNI.java" target-dir="src/com/chinamobile/bsdiff" />
+        <source-file src="src/android/BsdiffUtil.java" target-dir="src/com/chinamobile/bsdiff" />
+		<source-file src="src/android/DownloadBreakPoint.java" target-dir="src/com/chinamobile/bsdiff" />
+        <source-file src="src/android/DownloadBreakPointListener.java" target-dir="src/com/chinamobile/bsdiff" />
+		<source-file src="src/android/DownloadBreakPointManager.java" target-dir="src/com/chinamobile/bsdiff" />
+
+		<framework src="com.android.support:support-v4:27.1.0"/>
+    </platform>
+    
+    <platform name="ios">
+        
+		<!-- app更新插件 -->
+		<config-file target="config.xml" parent="/*">
+			<feature name="BsdiffUpdate">
+				<param name="ios-package" value="BsdiffUpdate" />
+			</feature>
+		</config-file>
+
+        <!-- 网络权限 -->
+        <config-file target="*-Info.plist" parent="NSAppTransportSecurity">
+            <dict>
+                <key>NSAllowsArbitraryLoads</key>
+                <boolean>YES</boolean>
+            </dict>
+        </config-file>
+
+        <!-- 项目文件 -->
+        <header-file src="src/ios/BsdiffUpdate.h" />
+        <source-file src="src/ios/BsdiffUpdate.m" />
+    </platform>
+</plugin>

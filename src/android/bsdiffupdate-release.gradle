@@ -1,0 +1,72 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://nqi.gmcc.net:20443/nexus/repository/maven-public/"
+        }
+    }
+  /*  repositories {
+        jcenter()
+        maven {
+            url "https://maven.google.com"
+        }
+    }*/
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.0'
+    }
+}
+
+repositories{
+   /* mavenCentral()
+    jcenter()*/
+    maven {
+        url "https://nqi.gmcc.net:20443/nexus/repository/maven-public/"
+    }
+    flatDir {
+        dirs 'src/main/libs'
+    }
+}
+
+dependencies {
+}
+
+android {
+    defaultConfig {
+        ndk{
+            moduleName "native-lib"
+            abiFilters "armeabi-v7a"
+            abiFilters "x86"
+        }
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+                abiFilters "armeabi-v7a"
+                abiFilters "x86"
+            }
+        }
+        multiDexEnabled true
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.10.2"
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        pickFirst 'lib/armeabi-v7a/libdiag_helper03.so'
+        pickFirst 'lib/arm64-v8a/libdiag_helper03.so'
+        pickFirst 'lib/x86_64/libdiag_helper03.so'
+        pickFirst 'lib/x86/libdiag_helper03.so'
+        pickFirst 'lib/armeabi/libdiag_helper03.so'
+    }
+
+    sourceSets{
+        main{
+            jniLibs.srcDir 'libs'
+            jni.srcDirs = []    //disable automatic ndk-build
+        }
+    }
+}
